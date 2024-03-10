@@ -1,3 +1,4 @@
+import pandas as pd
 from flask import Flask, render_template
 
 app = Flask(__name__)
@@ -12,7 +13,10 @@ def home():
 # Create API page
 @app.route("/api/v1/<station>/<date>")
 def about(station, date):
-    temperature = 23
+    # Get dataframe for specific station
+    df = pd.read_csv(f"data/TG_STAID{str(station).zfill(6)}.txt", skiprows=20, parse_dates=["    DATE"])
+    # Get temperature for specific date and station
+    temperature = df.loc[df["    DATE"] == date]["   TG"].squeeze() / 10
     return {"station": station,
             "date": date,
             "temperature": temperature}
